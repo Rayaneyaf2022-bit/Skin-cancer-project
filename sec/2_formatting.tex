@@ -1,0 +1,25 @@
+\section{Experimental Setup and Results}
+
+\subsection{Hardware and Implementation}
+Experiments were conducted on an Apple M4 chipset (Macbook air) with a 10 core GPU using MPS for hardware acceleration. The models were implemented using the PyTorch framework.
+i utilized a batch size of 32 and the Adam optimizer with a learning rate of $1e-4$ for ResNet-50 and $1e-5$ for the Vision Transformer.
+
+\subsection{Performance Metrics}
+The primary metric for this comparison was the Cross Entropy Loss after a full epoch of the HAM10000 dataset (10,015 images).
+As shown in Table~\ref{tab:results}, the total training time for both models was approximately 19 minutes.
+
+\begin{table}[h]
+\centering
+\caption{Comparison of Training Performance on Apple M4 GPU}
+\label{tab:results}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Model Architecture} & \textbf{Training Loss} & \textbf{Time (min)} & \textbf{Efficiency} \\ \midrule
+ResNet-50 (Baseline)       & \textbf{0.6002}        & 9.5                 & 1054 img/min       \\
+ViT-Base                   & 0.9884                 & 9.5                 & 1054 img/min       \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Analysis}
+As shown in Table \ref{tab:results}, the ResNet-50 model achieved a 39\% lower loss than the Vision Transformer within the same time constraints.
+This confirms that for dermatoscopic images in a one epoch local training scenario, CNNs provide a more efficient inductive bias than global self attention mechanisms.

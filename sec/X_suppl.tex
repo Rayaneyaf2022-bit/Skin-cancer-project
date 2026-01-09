@@ -1,0 +1,28 @@
+\section{Supplementary Material}
+
+In this section,i provided additional visual evidence and interpretability analysis to support the findings in the main report.
+These materials demonstrate the technical feasibility and result integrity of our experiments on the M4 silicon.
+
+\subsection{Model Interpretability: Attention Maps}
+
+To understand how the ResNet-50 and the ViT distinguish between different skin lesions, i generated attention maps using the code provided in the open-source repository. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{supplementary/attention_map.png}
+    \caption{Visualizing the Attention Map for a sample lesion (ISIC\_0024306). The heatmap on the right indicates that the model focuses on the central pigmented area and irregular borders to make its classification decision.}
+    \label{fig:attention_map}
+\end{figure}
+
+As shown in Figure \ref{fig:attention_map}, the model successfully localizes the lesion without being distracted by background noise or skin texture.
+This interpretability is crucial for medical applications to ensure result integrity and trust in AI assisted diagnosis.
+
+\subsection{Hardware Performance Demo}
+
+This demo showcases the real time utilization of the \textbf{Apple M4 GPU} via the \textit{MPS} backend. It demonstrates:
+
+\begin{itemize}
+    \item Rapid data loading from the HAM10000 dataset.
+    \item Real-time loss reduction during the 1-epoch benchmark.
+    \item GPU memory efficiency on the local M4 chip.
+\end{itemize}

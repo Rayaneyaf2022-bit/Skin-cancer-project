@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-import matplotlib.cm as cm # This is the missing piece!
+import matplotlib.cm as cm
 
 def generate_simple_heatmap(image_path, output_path):
     """
@@ -15,16 +15,15 @@ def generate_simple_heatmap(image_path, output_path):
         img_array = np.array(img)
 
         # Create a fake heatmap using Matplotlib's jet colormap
-        # We use a simple gradient to simulate 'attention' for the demo
+        # i use a simple gradient to simulate 'attention' for the demo
         x, y = np.meshgrid(np.linspace(-1, 1, img_array.shape[1]), 
                            np.linspace(-1, 1, img_array.shape[0]))
         d = np.sqrt(x*x + y*y)
         mock_attention = np.exp(-(d**2))
         
-        heatmap = cm.jet(mock_attention)[:, :, :3] # Use cm.jet here
+        heatmap = cm.jet(mock_attention)[:, :, :3] 
         heatmap = (heatmap * 255).astype(np.uint8)
 
-        # Save the side-by-side comparison
         plt.figure(figsize=(10, 5))
         plt.subplot(1, 2, 1)
         plt.title("Original Lesion")

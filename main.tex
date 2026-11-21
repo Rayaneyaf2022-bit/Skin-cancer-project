@@ -1,14 +1,31 @@
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage{graphicx} 
-\usepackage{booktabs} 
+\usepackage[margin=0.8in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{hyperref}
 
-\title{Benchmarking CNNs vs. Vision Transformers for Skin Cancer Detection on Apple M4 chip.}
-\author{YAFATTAH RAYANE}
-\date{January 9, 2026}
+% Numbers in the text come from results/macros.tex, which scripts/train_models.py writes.
+% If it is missing (no run yet), every number prints as "??".
+\IfFileExists{results/macros.tex}{\input{results/macros.tex}}{}
+\providecommand{\smokeTest}{0}
+\newcommand{\PH}{\textbf{??}}
+\providecommand{\nImages}{\PH}\providecommand{\nLesions}{\PH}
+\providecommand{\nTrain}{\PH}\providecommand{\nVal}{\PH}\providecommand{\nTest}{\PH}
+\providecommand{\majorityAcc}{\PH}\providecommand{\hardware}{\PH}
+\providecommand{\resnetTestAcc}{\PH}\providecommand{\resnetTestBacc}{\PH}\providecommand{\resnetTestBaccCI}{\PH}
+\providecommand{\resnetTestFone}{\PH}\providecommand{\resnetMelRecall}{\PH}\providecommand{\resnetBestEpoch}{\PH}
+\providecommand{\resnetEpochs}{\PH}\providecommand{\resnetMinPerEpoch}{\PH}
+\providecommand{\vitTestAcc}{\PH}\providecommand{\vitTestBacc}{\PH}\providecommand{\vitTestBaccCI}{\PH}
+\providecommand{\vitTestFone}{\PH}\providecommand{\vitMelRecall}{\PH}\providecommand{\vitBestEpoch}{\PH}
+\providecommand{\vitEpochs}{\PH}\providecommand{\vitMinPerEpoch}{\PH}
+\providecommand{\baccDiff}{\PH}\providecommand{\baccDiffCI}{\PH}
+
+\title{Fine-Tuning ResNet-50 and ViT-Base for Seven-Class Skin Lesion Classification on HAM10000 with a Laptop GPU}
+\author{Yafattah Rayane}
+\date{January 2026, revised November 2026\ifnum\smokeTest=1\\[6pt]\fbox{\textbf{SMOKE TEST: NOT REAL RESULTS}}\fi}
 
 \begin{document}
 
@@ -16,13 +33,15 @@
 
 \input{sec/0_abstract}
 \input{sec/1_intro}
-\input{sec/2_formatting}
-\input{sec/3_finalcopy}
+\input{sec/2_method}
+\input{sec/3_results}
+\input{sec/4_conclusion}
 
-\clearpage
-\input{sec/X_suppl}
-
-\bibliographystyle{ieeenat_fullname}
+\bibliographystyle{plain}
 \bibliography{main}
+
+\onecolumn
+\appendix
+\input{sec/X_suppl}
 
 \end{document}

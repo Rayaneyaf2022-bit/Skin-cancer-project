@@ -1,0 +1,12 @@
+\section{Conclusion and limitations}
+I fine-tuned ResNet-50 and ViT-Base on HAM10000 on a laptop GPU, with a lesion-level split, class-weighted loss and augmentation, and evaluated both on held-out lesions with imbalance-aware metrics (Section~\ref{sec:results}).
+With this short training budget the two architectures reach similar balanced accuracy (\resnetTestBacc{} and \vitTestBacc{}), and the difference is within test-set noise; ResNet-50 trains about 2.6 times faster per epoch on the laptop GPU.
+Both remain weak on melanoma, the most clinically important class.
+
+The study has clear limitations.
+It is a single run with one seed and one split, with only a few epochs and no hyperparameter search, so the comparison may change under a larger budget; Vision Transformers lack some of the inductive biases of CNNs and depend more on pre-training scale~\cite{dosovitskiy2021image}, so their relative standing is sensitive to these choices.
+The rarest classes have few test images (9 for dermatofibroma, 21 for vascular lesions), so their recall estimates are noisy.
+PyTorch's MPS backend is not fully deterministic, so a rerun can give slightly different numbers.
+Finally, HAM10000 was collected at two sites and does not represent all skin types, imaging devices or clinical settings~\cite{tschandl2018ham10000}; test performance on its own held-out lesions says nothing about clinical use.
+
+Natural next steps are repeating the run over several seeds, training longer at higher resolution, and evaluating on an external dataset.

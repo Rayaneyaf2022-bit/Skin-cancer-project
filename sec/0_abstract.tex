@@ -1,7 +1,9 @@
 \begin{abstract}
-My study presents a comparative analysis between CNNs (ResNet-50) and Vision Transformers (ViT-Base) for the classification of dermatoscopic images from the HAM10000 dataset.
-Utilizing MPS (Metal Performance Shaders acceleration on an apple M4 chip, and it managed to process (on GPU power) 10015 iamges in approximately 17 minutes.
-The results indicate that ResNet-50 acheived a superior tarining loss of 0.6002 compared to 0.9884 for the ViT-Base model.
-the results suggest that the ResNet-50 provides a significant advantage in convergence speed and accuracy for specialized medical imaging tasks.
+I compare two ImageNet-pretrained backbones, ResNet-50~\cite{he2016deep} and ViT-Base/16~\cite{dosovitskiy2021image}, fine-tuned for seven-class classification of dermatoscopic images from HAM10000~\cite{tschandl2018ham10000}.
+Images are split into training, validation and test sets at the lesion level, so that no lesion contributes images to more than one set.
+Both models are trained for a few epochs on a MacBook Air GPU (\hardware; PyTorch MPS backend), with class-weighted cross-entropy and data augmentation to counter the strong class imbalance.
+On the held-out test set ($n=\nTest$), ResNet-50 reaches a balanced accuracy of \resnetTestBacc{} (95\% bootstrap CI \resnetTestBaccCI) and ViT-Base \vitTestBacc{} (\vitTestBaccCI); always predicting the majority class gives 0.143.
+The difference between the two models (\baccDiff{}, 95\% CI \baccDiffCI) is within test-set noise, while ResNet-50 trains about 2.6 times faster per epoch.
+Both models remain weak on melanoma, with recall of \resnetMelRecall{} and \vitMelRecall{}.
+These are results from one training run, one random seed and one data split, and are not a clinical evaluation.
 \end{abstract}
-

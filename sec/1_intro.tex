@@ -1,8 +1,11 @@
 \section{Introduction}
-Automated classification of skin lesions is an extremely important task in dermatology, where early detection of tumors such as melanoma can significantly improve patient outcomes.
-Traditional deep learning approaches have relied heavily on CNNs like ResNet-50, which excel at capturing local spatial patterns through inductive biases.
-However, the recent emergence of Vision Transformers has challenged this standard by utilizing self attention mechanisms to capture global dependencies across image patches.
+Automated classification of dermatoscopic images is a well-studied problem; melanoma in particular benefits from early detection.
+Convolutional networks such as ResNet-50~\cite{he2016deep} build in locality and translation equivariance, while Vision Transformers~\cite{dosovitskiy2021image} model relations between image patches with self-attention and typically rely more on large-scale pre-training.
 
-In this project, i evaluated these two architectures using the HAM10000 dataset with a large scale collection of dermatoscopic images.
-The key focus of my study is the feasibility of training these complex models on consumer grade hardware.
-By leveraging the M4 chip's MPS, i helped show that high performance medical image classification is possible outside of traditional server environment by providing a benchmark for local diagnostic tools.
+This project asks a narrow, practical question: with ImageNet pre-training, a short fine-tuning budget and a consumer laptop (MacBook Air, \hardware, PyTorch MPS backend), how do the two architectures compare on HAM10000~\cite{tschandl2018ham10000} when evaluated on lesions they have not seen?
+The emphasis is on a sound evaluation protocol (lesion-level split, imbalance-aware metrics, a test set touched once) rather than on reaching state-of-the-art numbers.
+
+\paragraph{Revision note.}
+An earlier version of this report (January 2026) trained each model for one epoch on all 10,015 images on an Apple M4 machine and reported only the training loss, which does not measure generalisation; its supplementary heat-map was a placeholder graphic, not computed from a model.
+Those results and that figure have been removed.
+All numbers below come from \texttt{scripts/train\_models.py} and are written into this document automatically from its output files.

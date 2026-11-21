@@ -1,34 +1,58 @@
-import pandas as pd
-import matplotlib.pyplot as plt
+"""Check that the dataset and pretrained weights are in place before training.
+
+HAM10000 is downloaded by hand (Harvard Dataverse or Kaggle); this script only checks it.
+Run from the repo root:  python3 scripts/download_data.py
+"""
 import os
-from PIL import Image
+import sys
+
+import pandas as pd
 import torch
+from PIL import Image
 
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-print(f"Using device: {device}")
+from common import CLASSES, hardware_name
 
-try:
-    df = pd.read_csv('data/HAM10000_metadata.csv')
-    image_dir = 'data/all_images/'
-    print(f"Success! Found {len(df)} image entries in the CSV.")
-    
-    sample_id = df['image_id'][0]
-    if os.path.exists(os.path.join(image_dir, f"{sample_id}.jpg")):
-        print("Verified: Images are in the correct folder.")
+ok = True
+
+
+def report(passed, msg):
+    global ok
+    ok &= passed
+    print(("  OK   " if passed else "  FAIL ") + msg)
+
+
+print(f"Machine: {hardware_name()} | MPS available: {torch.backends.mps.is_available()}")
+
+print("\nDataset")
+meta = "data/HAM10000_metadata.csv"
+img_dir = "data/all_images"
+if os.path.exists(meta):
+    df = pd.read_csv(meta)
+    report({"lesion_id", "image_id", "dx"} <= set(df.columns), f"{meta} has lesion_id, image_id, dx columns")
+    report(len(df) == 10015, f"{len(df)} rows (expected 10015), {df.lesion_id.nunique()} lesions")
+    report(set(df.dx) <= set(CLASSES), "classes: " + str({k: int(v) for k, v in df.dx.value_counts().items()}))
+    if os.path.isdir(img_dir):
+        files = {f[:-4] for f in os.listdir(img_dir) if f.endswith(".jpg")}
+        missing = set(df.image_id) - files
+        report(not missing, f"{len(files)} .jpg files in {img_dir}, {len(missing)} listed in metadata but missing")
+        if files - missing:
+            size = Image.open(os.path.join(img_dir, sorted(files)[0] + ".jpg")).size
+            report(size == (600, 450), f"image size {size} (original HAM10000 is (600, 450))")
     else:
-        print("Error: Images not found in data/all_images/")
+        report(False, f"{img_dir}/ not found")
+else:
+    report(False, f"{meta} not found")
 
-    fig, axes = plt.subplots(1, 5, figsize=(15, 5))
-    for i in range(5):
-        img_id = df['image_id'][i]
-        label = df['dx'][i]
-        img = Image.open(os.path.join(image_dir, f"{img_id}.jpg"))
-        axes[i].imshow(img)
-        axes[i].set_title(f"Type: {label}")
-        axes[i].axis('off')
-    
-    print("Opening preview window... (Close it to continue)")
-    plt.show()
+print("\nViT weights (models/vit-local)")
+for name, min_mb in (("config.json", 0), ("preprocessor_config.json", 0), ("model.safetensors", 300)):
+    p = os.path.join("models/vit-local", name)
+    mb = os.path.getsize(p) / 2**20 if os.path.exists(p) else -1
+    report(mb >= min_mb, f"{name}: " + (f"{mb:.1f} MB" if mb >= 0 else "missing"))
 
-except Exception as e:
-    print(f"Something went wrong: {e}")
+print("\nResNet-50 weights")
+p = os.path.join(torch.hub.get_dir(), "checkpoints", "resnet50-11ad3fa6.pth")
+mb = os.path.getsize(p) / 2**20 if os.path.exists(p) else -1
+report(mb > 90, f"{p}: " + (f"{mb:.1f} MB" if mb >= 0 else "missing (will be downloaded on first run if the network allows)"))
+
+print("\nAll checks passed." if ok else "\nFix the FAIL lines above before training.")
+sys.exit(0 if ok else 1)
